@@ -29,27 +29,23 @@ class MessageParser {
     }
 
     func run() throws {
-        print("*** TEST1")
-
         let messageText: String?
         let replyId: Int
         if let reply = message.replyToMessage, message.text == botName {
             // Analyze reply
             messageText = reply.text
             replyId = reply.messageId
-        } else {
+        } else if message.chat.type == .privateChat {
             // Analyze message
             messageText = message.text
             replyId = message.messageId
+        } else {
+            return
         }
-
-        print("*** TEST2")
 
         guard let text = messageText else {
             return
         }
-
-        print("*** TEST3")
 
         let doc = GoogleMessageSentimentRequest.Document.init(type: .plainText, language: nil, content: text)
         let request = GoogleMessageSentimentRequest(document: doc, encodingType: .utf8)
@@ -58,22 +54,24 @@ class MessageParser {
         firstly {
             GoogleMessageSentimentApi(apiKey: apiKey).sentiment(request: request)
         }.done(on: queue) { response in
-            let sendApi = TelegramSendApi(token: self.token)
+            let sendApi = TelegramSendApi(token: self.token, provider: SnakeTelegramProvider(token: self.token))
 
             let text = self.generateResponse(res: response)
-
-            print("*** TEST4")
 
             let chatId = self.message.chat.id
             sendApi.sendMessage(message: TelegramSendMessage(chatId: chatId, text: text, parseMode: .markdown, replyToMessageId: replyId))
         }.catch(on: queue) { error in
             print("*** ERROR ***")
             print(error)
+
+            let sendApi = TelegramSendApi(token: self.token, provider: SnakeTelegramProvider(token: self.token))
+            let text = "This is not a language."
+            sendApi.sendMessage(message: TelegramSendMessage(chatId: self.message.chat.id, text: text, replyToMessageId: replyId))
         }
     }
 
     private func generateResponse(res: GoogleMessageSentimentResponse) -> String {
-        var response = "*SENTIMENT ANALYSIS*"
+        var response = "*SENTIMENT ANALYSIS* (\(res.language))"
 
         let isPositive: Bool
         if res.documentSentiment.score >= 0 {
