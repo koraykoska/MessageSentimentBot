@@ -84,15 +84,24 @@ class MessageParser {
 
         response += " (\(Int(res.documentSentiment.score * 100))%)."
 
-        var oppositeCount = 0
+        /*
+         var oppositeCount = 0
+         for sentence in res.sentences {
+         if isPositive && sentence.sentiment.score < 0 {
+         oppositeCount += 1
+         } else if !isPositive && sentence.sentiment.score >= 0 {
+         oppositeCount += 1
+         }
+         }
+         let variation: Double = Double(oppositeCount) / Double(res.sentences.count)
+         */
+        var average: Double = 0
         for sentence in res.sentences {
-            if isPositive && sentence.sentiment.score < 0 {
-                oppositeCount += 1
-            } else if !isPositive && sentence.sentiment.score >= 0 {
-                oppositeCount += 1
-            }
+            average += sentence.sentiment.score
         }
-        let variation: Double = Double(oppositeCount) / Double(res.sentences.count)
+        average = res.sentences.count > 0 ? average / Double(res.sentences.count) : 0
+
+        let variation = normalDistribution(μ: average, σ: 0.5)(0.5)
 
         response += "\n• Within the message the sentiment varies around \(Int(variation * 100))%."
 
