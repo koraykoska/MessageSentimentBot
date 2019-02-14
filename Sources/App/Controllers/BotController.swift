@@ -37,6 +37,7 @@ final class BotController {
         }
 
         if correctCommands.count == 0 {
+            print("*** TEST0")
             // Fallback message parser
             try? MessageParser(message: message, token: token, botName: botName, apiKey: apiKey).run()
         }

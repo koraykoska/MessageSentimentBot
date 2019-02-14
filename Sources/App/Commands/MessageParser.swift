@@ -29,6 +29,8 @@ class MessageParser {
     }
 
     func run() throws {
+        print("*** TEST1")
+
         let messageText: String?
         let replyId: Int
         if let reply = message.replyToMessage, message.text == botName {
@@ -41,9 +43,13 @@ class MessageParser {
             replyId = message.messageId
         }
 
+        print("*** TEST2")
+
         guard let text = messageText else {
             return
         }
+
+        print("*** TEST3")
 
         let doc = GoogleMessageSentimentRequest.Document.init(type: .plainText, language: nil, content: text)
         let request = GoogleMessageSentimentRequest(document: doc, encodingType: .utf8)
@@ -55,6 +61,8 @@ class MessageParser {
             let sendApi = TelegramSendApi(token: self.token)
 
             let text = self.generateResponse(res: response)
+
+            print("*** TEST4")
 
             let chatId = self.message.chat.id
             sendApi.sendMessage(message: TelegramSendMessage(chatId: chatId, text: text, parseMode: .markdown, replyToMessageId: replyId))
