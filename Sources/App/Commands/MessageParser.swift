@@ -101,12 +101,12 @@ class MessageParser {
         }
         average = res.sentences.count > 0 ? average / Double(res.sentences.count) : 0
 
-        let variation = normalDistribution(μ: average, σ: 0.5)(0.5)
+        let variation = res.sentences.count > 1 ? normalDistribution(μ: average, σ: 0.5)(0.5) : 0
 
         response += "\n• Within the message the sentiment varies around \(Int(variation * 100))%."
 
         if variation > 0.3 {
-            response += "\n\n_> Note: Be careful! Messages with a big sentiment variation often imply that the person writing the message is angry or annoyed. It may also imply some kind of schizophrenic behavior (this is no medical advice)._"
+            response += "\n\n_> Note: Be careful! Messages with a high sentiment variation often imply that the person writing the message is angry or annoyed. It may also imply some kind of schizophrenic behavior (this is no medical advice)._"
         }
 
         return response
