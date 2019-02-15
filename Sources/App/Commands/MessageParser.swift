@@ -98,7 +98,7 @@ class MessageParser {
         }
         average = res.sentences.count > 0 ? average / Double(res.sentences.count) : 0
 
-        let variation = normalDistribution(μ: average, σ: 0.5)(0.5)
+        let variation = res.sentences.count > 1 ? normalDistribution(μ: average, σ: 0.5)(0.5) : 0
 
         response += "\n• Within the message the sentiment varies around \(Int(variation * 100))%."
 
