@@ -73,13 +73,10 @@ class MessageParser {
     private func generateResponse(res: GoogleMessageSentimentResponse) -> String {
         var response = "*SENTIMENT ANALYSIS* (\(res.language))"
 
-        let isPositive: Bool
         if res.documentSentiment.score >= 0 {
             response += "\n\n• The overall sentiment of this message is positive"
-            isPositive = true
         } else {
             response += "\n\n• The overall sentiment of this message is negative"
-            isPositive = false
         }
 
         response += " (\(Int(res.documentSentiment.score * 100))%)."
@@ -97,11 +94,11 @@ class MessageParser {
          */
         var average: Double = 0
         for sentence in res.sentences {
-            average += sentence.sentiment.score
+            average += abs(res.documentSentiment.score - sentence.sentiment.score)
         }
         average = res.sentences.count > 0 ? average / Double(res.sentences.count) : 0
 
-        let variation = res.sentences.count > 1 ? normalDistribution(μ: average, σ: 0.5)(0.5) : 0
+        let variation = normalDistribution(μ: average, σ: 0.5)(0.5)
 
         response += "\n• Within the message the sentiment varies around \(Int(variation * 100))%."
 
