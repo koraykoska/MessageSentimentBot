@@ -31,7 +31,7 @@ class MessageParser {
     func run() throws {
         let messageText: String?
         let replyId: Int
-        if let reply = message.replyToMessage, message.text == botName {
+        if let reply = message.replyToMessage, message.text == botName || message.text == "#sentiment" {
             // Analyze reply
             messageText = reply.text
             replyId = reply.messageId
