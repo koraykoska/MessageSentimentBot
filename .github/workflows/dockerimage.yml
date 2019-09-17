@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+ 
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag 337593502545.dkr.ecr.us-east-2.amazonaws.com/ybrin/messagesentimentbot:$(date +%s)
+    - uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: 337593502545.dkr.ecr.us-east-2.amazonaws.com/ybrin/messagesentimentbot
+        username: AWS
+        password: ${{ secrets.AWS_REGISTRY_TOKEN }}
+        registry: https://337593502545.dkr.ecr.us-east-2.amazonaws.com
