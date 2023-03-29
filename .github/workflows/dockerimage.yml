@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag 337593502545.dkr.ecr.us-east-2.amazonaws.com/ybrin/messagesentimentbot:$(date +%s)
-    - uses: elgohr/Publish-Docker-Github-Action@master
+    - uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: 337593502545.dkr.ecr.us-east-2.amazonaws.com/ybrin/messagesentimentbot
         username: AWS
